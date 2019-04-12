@@ -20,10 +20,10 @@ namespace RonSwanson_Quotes
         {
             var api = new QuotesApi();
             var quote = api.GetSwansonQuote(quoteSizeRadioButtonList.SelectedValue);
-            PopulateQuote(quote);
+            DisplayQuote(quote);
         }
 
-        private void PopulateQuote(string quote)
+        private void DisplayQuote(string quote)
         {
             using (RonSwanson_Quotes.RonSwansonQuotes_dbEntities dc = new RonSwanson_Quotes.RonSwansonQuotes_dbEntities())
             {
@@ -38,18 +38,21 @@ namespace RonSwanson_Quotes
                              Score = AA.Sum(a => a.b.Rating) == null ? 0 : AA.Sum(a => a.b.Rating),
                              Count = AA.Count()
                          });
-                List<QuoteWithRating> AWS = new List<QuoteWithRating>();
+
                 foreach (var i in v)
                 {
                     if(i.QuoteText.Equals(quote))
                     {
-                        AWS.Add(new QuoteWithRating
+                        var DisplayedQuote = new List<QuoteWithRating>();
+
+                        DisplayedQuote.Add(new QuoteWithRating()
                         {
                             QuoteID = i.QuoteId,
                             QuoteText = i.QuoteText,
                             Rating = i.Score / i.Count
                         });
-                        GridView1.DataSource = AWS;
+
+                        GridView1.DataSource = DisplayedQuote;
                         GridView1.DataBind();
                     }
                 }
@@ -61,13 +64,14 @@ namespace RonSwanson_Quotes
         public static int SaveRating(int quoteId, byte rating)
         {
             int result = 0;
+
             using (RonSwanson_Quotes.RonSwansonQuotes_dbEntities dc = new RonSwanson_Quotes.RonSwansonQuotes_dbEntities())
             {
                 dc.RatingsTables.Add(new RatingsTable
                 {
                     QuoteId = quoteId,
-                    RatingId = 0,
                     Rating = rating,
+                    RatingId = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     Date = DateTime.Now
                 });
                 dc.SaveChanges();
@@ -79,8 +83,10 @@ namespace RonSwanson_Quotes
                                 {
                                     QuoteRating = aa.Sum(a => a.Rating) / aa.Count()
                                 }).FirstOrDefault();
+
                 result = newRating.QuoteRating;
             }
+
             return result;
         }
     }

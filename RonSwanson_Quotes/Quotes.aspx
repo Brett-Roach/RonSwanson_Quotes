@@ -32,11 +32,11 @@
                 var qotId = $("#" + $(this).parent().attr('id') + ' .quoteId').val();
                 
                 $("#" + $(this).parent().attr('id') + " .star").hide();
-                $("#" + $(this).parent().attr('id') + " .yourRating").html("Your Rating is : &nbsp;<b style='color:#ff9900; font-size:15px'>" + v + "</b>");
+                $("#" + $(this).parent().attr('id') + " .yourRating").html("Your Rating: &nbsp;<b style='color:#ff9900; font-size:15px'>" + v + "</b>");
                 $.ajax({
                     type: "POST",
                     url: "Quotes.aspx/SaveRating",
-                    data: "{quoteId: '" + qotId + "',rate: '" + v + "'}",
+                    data: "{quoteId: '" + qotId + "',rating: '" + v + "'}",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (data) {
@@ -99,13 +99,12 @@
             <div>
                 <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false" CellPadding="5" align="center">
                     <Columns>
-                        <asp:BoundField HeaderText="Quote Id" DataField="QuoteId" />
                         <asp:BoundField HeaderText="Quote Text" DataField="QuoteText" />
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <div class="rating-star-block" id='div_<%#Container.DataItemIndex %>'>
                                     <input type="hidden" class="quoteId" value='<%#Eval("QuoteId") %>' />
-                                    Current Rating :<span class="CurrentScore"><%#Eval("Rating") %></span><br /><div class="yourRating">Your Rating : </div> 
+                                    Average Rating: <span class="CurrentScore"><%#Eval("Rating") %></span><br /><div class="yourRating">Your Rating : </div> 
                                     <a class="star outline" href="#" rating="1" title="vote 1"> vote 1</a>
                                     <a class="star outline" href="#" rating="2" title="vote 2"> vote 2</a>
                                     <a class="star outline" href="#" rating="3" title="vote 3"> vote 3</a>
